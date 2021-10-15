@@ -1,7 +1,8 @@
 #include "draggablelabel.h"
 #include <iostream>
-#include <QResource>
-#include <QDir>
+#include <QDrag>
+#include <QMouseEvent>
+#include <QMimeData>
 #include <QPixmap>
 DraggableLabel::DraggableLabel(QWidget* parent)
     :QLabel(parent)
@@ -12,7 +13,16 @@ DraggableLabel::DraggableLabel(QWidget* parent)
 
 void DraggableLabel::mousePressEvent(QMouseEvent* event)
 {
-    std::cout << Q_FUNC_INFO << std::endl;
+    if (event->button() == Qt::LeftButton)
+    {
+
+            QDrag* drag = new QDrag(this);
+            QMimeData* mimeData = new QMimeData;
+            mimeData->setText("apple");
+            drag->setMimeData(mimeData);
+            Qt::DropAction dropAction = drag->exec();
+            Q_UNUSED(dropAction);
+        }
 }
 
 void DraggableLabel::mouseReleaseEvent(QMouseEvent* event)
