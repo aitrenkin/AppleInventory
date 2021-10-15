@@ -26,35 +26,46 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTableWidget" name="appleTable">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>351</width>
-      <height>301</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="sourceImage">
-    <property name="geometry">
-     <rect>
-      <x>437</x>
-      <y>7</y>
-      <width>391</width>
-      <height>301</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="res.qrc">:/images/red_apple.jpg</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTableWidget" name="appleTable">
+      <property name="minimumSize">
+       <size>
+        <width>391</width>
+        <height>301</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>391</width>
+        <height>301</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="DraggableLabel" name="sourceImage">
+      <property name="minimumSize">
+       <size>
+        <width>391</width>
+        <height>301</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>391</width>
+        <height>301</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -68,8 +79,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources>
-  <include location="res.qrc"/>
- </resources>
+ <customwidgets>
+  <customwidget>
+   <class>DraggableLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">draggablelabel.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
  <connections/>
 </ui>
