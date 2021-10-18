@@ -22,24 +22,39 @@
     <height>400</height>
    </size>
   </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QTableWidget" name="appleTable">
+     <widget class="DropAcceptingTableWidget" name="appleTable">
       <property name="minimumSize">
        <size>
-        <width>391</width>
-        <height>301</height>
+        <width>350</width>
+        <height>350</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>391</width>
-        <height>301</height>
+        <width>350</width>
+        <height>350</height>
        </size>
+      </property>
+      <property name="acceptDrops">
+       <bool>true</bool>
+      </property>
+      <property name="dragEnabled">
+       <bool>true</bool>
+      </property>
+      <property name="dragDropMode">
+       <enum>QAbstractItemView::DropOnly</enum>
+      </property>
+      <property name="defaultDropAction">
+       <enum>Qt::MoveAction</enum>
       </property>
      </widget>
     </item>
@@ -56,6 +71,9 @@
         <width>391</width>
         <height>301</height>
        </size>
+      </property>
+      <property name="acceptDrops">
+       <bool>false</bool>
       </property>
       <property name="text">
        <string/>
@@ -84,6 +102,11 @@
    <class>DraggableLabel</class>
    <extends>QLabel</extends>
    <header location="global">draggablelabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DropAcceptingTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header location="global">dropacceptingtablewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

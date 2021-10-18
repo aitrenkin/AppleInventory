@@ -10,11 +10,13 @@ CONFIG += c++11
 
 SOURCES += \
     draggablelabel.cpp \
+    dropacceptingtablewidget.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     draggablelabel.h \
+    dropacceptingtablewidget.h \
     mainwindow.h
 
 FORMS += \
