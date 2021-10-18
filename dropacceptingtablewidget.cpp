@@ -5,6 +5,7 @@
 #include <QDropEvent>
 #include <QMimeData>
 #include <QHeaderView>
+#include <QDrag>
 DropAcceptingTableWidget::DropAcceptingTableWidget(QWidget* parent)
     :QTableWidget(parent)
 {
@@ -38,7 +39,8 @@ void DropAcceptingTableWidget::dropEvent(QDropEvent* event)
         auto r = item->row();
         auto c = item->column();
         std::cout << "Dropped in: " << r << " " << c << std::endl;
-        mInventory->at(r,c)++;
+        auto toAdd = event->mimeData()->text().toInt();
+        mInventory->at(r,c) += toAdd;
         updateImageOn(item->row(), item->column());
     }
 }
@@ -98,4 +100,28 @@ Inventory::Inventory(size_t size)
 size_t& Inventory::at(int row, int column)
 {
     return mTableOfCounters[row][column];
+}
+
+
+void DropAcceptingTableWidget::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+            QDrag* drag = new QDrag(this);
+            QMimeData* mimeData = new QMimeData;
+            auto item = itemAt(event->pos());
+            if(!item)
+                return;
+            auto r = item->row();
+            auto c = item->column();
+            auto &dragValue = mInventory->at(r, c);
+            mimeData->setText(QString::number(dragValue));
+            drag->setMimeData(mimeData);
+            Qt::DropAction dropAction = drag->exec();
+            if(dropAction)
+            {
+                dragValue = 0;
+                updateImageOn(r, c);
+            }
+    }
 }

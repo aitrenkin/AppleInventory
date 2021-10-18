@@ -51,6 +51,10 @@ private:
     void updateImageOn(int row, int column);
     QPointer<Inventory> mInventory;
     QPointer<Item> mItem;
+
+    // QWidget interface
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
 };
 
 #endif // DROPACCEPTINGTABLEWIDGET_H
