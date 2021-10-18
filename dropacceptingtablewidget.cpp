@@ -1,5 +1,6 @@
 #include "dropacceptingtablewidget.h"
 #include <iostream>
+#include <QPainter>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
@@ -12,6 +13,11 @@ DropAcceptingTableWidget::DropAcceptingTableWidget(QWidget* parent)
     createSquareTable(3);
     horizontalHeader()->hide();
     verticalHeader()->hide();
+    //
+
+    //todo read from DB
+    mInventory = new Inventory(3);
+
 }
 
 
@@ -29,8 +35,10 @@ void DropAcceptingTableWidget::dropEvent(QDropEvent* event)
     auto item = itemAt(event->pos());
     if(item)
     {
-        std::cout << "Dropped in: " << item->row() << " " <<
-                     item->column() << std::endl;
+        auto r = item->row();
+        auto c = item->column();
+        std::cout << "Dropped in: " << r << " " << c << std::endl;
+        mInventory->at(r,c)++;
         updateImageOn(item->row(), item->column());
     }
 }
@@ -54,7 +62,7 @@ void DropAcceptingTableWidget::createSquareTable(int count)
             auto thumbnail = new QTableWidgetItem();
             thumbnail->setFlags(thumbnail->flags() ^ Qt::ItemIsEditable);
             thumbnail->setData(Qt::DecorationRole,
-                                getScaledApplePixmap(100));
+                                mItem->getScaledApplePixmap(100));
             setItem(row,column,thumbnail);
             resizeColumnsToContents();
             resizeRowsToContents();
@@ -62,12 +70,32 @@ void DropAcceptingTableWidget::createSquareTable(int count)
     }
 }
 
-QPixmap DropAcceptingTableWidget::getScaledApplePixmap(int size)
+QPixmap Item::getScaledApplePixmap(int size)
 {
-    return QPixmap(":/images/red_apple.jpg").scaled(size,size,Qt::KeepAspectRatio);
+    return QPixmap(":/images/red_apple.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
 }
 
 void DropAcceptingTableWidget::updateImageOn(int row, int column)
 {
-    ;//
+    auto newCounter = mInventory->at(row,column);
+    auto resultedImage = mItem->getScaledApplePixmap(100);
+    QPainter painter(&resultedImage);
+    painter.drawText(90, 90, QString::number(newCounter));
+    item(row,column)->setData(Qt::DecorationRole, resultedImage);
+}
+
+Inventory::Inventory(size_t size)
+{
+    mTableOfCounters.resize(size);
+    for(auto &row: mTableOfCounters)
+    {
+        row.resize(size);
+        for(auto &value : row)
+            value = 0;
+    }
+}
+
+size_t& Inventory::at(int row, int column)
+{
+    return mTableOfCounters[row][column];
 }

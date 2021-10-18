@@ -2,6 +2,32 @@
 #define DROPACCEPTINGTABLEWIDGET_H
 
 #include <QTableWidget>
+#include <QPointer>
+class Item : public QObject
+{
+    Q_OBJECT
+public:
+    Item() = default;
+    Item(QString Type, QString IconPath)
+        : mType(Type), mIconPath(IconPath){}
+    QPixmap getScaledApplePixmap(int size);
+private:
+    QString mType;
+    QString mIconPath;
+};
+
+class Inventory : public QObject // to use QPointer
+{
+    Q_OBJECT
+public:
+    Inventory() = default;
+    Inventory(size_t size);
+    void clear();
+    void clearCounters();
+    size_t& at(int row, int column);
+private:
+    QVector<QVector<size_t>> mTableOfCounters;
+};
 
 class DropAcceptingTableWidget : public QTableWidget
 {
@@ -22,8 +48,9 @@ protected:
 
 private:
     void createSquareTable(int count);
-    QPixmap getScaledApplePixmap(int size);
     void updateImageOn(int row, int column);
+    QPointer<Inventory> mInventory;
+    QPointer<Item> mItem;
 };
 
 #endif // DROPACCEPTINGTABLEWIDGET_H

@@ -18,7 +18,7 @@ void DraggableLabel::mousePressEvent(QMouseEvent* event)
     {
             QDrag* drag = new QDrag(this);
             QMimeData* mimeData = new QMimeData;
-            mimeData->setText("apple");
+            mimeData->setText("1");
             drag->setMimeData(mimeData);
             Qt::DropAction dropAction = drag->exec();
             Q_UNUSED(dropAction);
