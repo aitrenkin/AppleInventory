@@ -124,4 +124,15 @@ void DropAcceptingTableWidget::mousePressEvent(QMouseEvent* event)
                 updateImageOn(r, c);
             }
     }
+    else if(event->button() == Qt::RightButton)
+    {
+        auto clickedItem = itemAt(event->pos());
+        if(clickedItem)
+        {
+            auto r = clickedItem->row();
+            auto c = clickedItem->column();
+            mInventory->at(r,c)--; //todo more checks
+            updateImageOn(r,c);
+        }
+    }
 }
