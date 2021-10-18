@@ -1,6 +1,6 @@
 #ifndef DROPACCEPTINGTABLEWIDGET_H
 #define DROPACCEPTINGTABLEWIDGET_H
-
+#include <QMediaPlayer>
 #include <QTableWidget>
 #include <QPointer>
 class Item : public QObject
@@ -51,7 +51,7 @@ private:
     void updateImageOn(int row, int column);
     QPointer<Inventory> mInventory;
     QPointer<Item> mItem;
-
+    QMediaPlayer player;
     // QWidget interface
 protected:
     void mousePressEvent(QMouseEvent* event) override;

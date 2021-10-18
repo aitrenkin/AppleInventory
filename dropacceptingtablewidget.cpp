@@ -6,6 +6,7 @@
 #include <QMimeData>
 #include <QHeaderView>
 #include <QDrag>
+
 DropAcceptingTableWidget::DropAcceptingTableWidget(QWidget* parent)
     :QTableWidget(parent)
 {
@@ -133,6 +134,10 @@ void DropAcceptingTableWidget::mousePressEvent(QMouseEvent* event)
             auto c = clickedItem->column();
             mInventory->at(r,c)--; //todo more checks
             updateImageOn(r,c);
+            player.setMedia(QUrl("qrc:/snd/crunch.mp3"));
+            player.setPosition(700);
+            player.setVolume(100);
+            player.play();
         }
     }
 }
