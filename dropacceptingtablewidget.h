@@ -49,6 +49,7 @@ protected:
 private:
     void createSquareTable(int count);
     void updateImageOn(int row, int column);
+    void removeAppleOn(QTableWidgetItem *item);
     QPointer<Inventory> mInventory;
     QPointer<Item> mItem;
     QMediaPlayer player;

@@ -83,8 +83,25 @@ void DropAcceptingTableWidget::updateImageOn(int row, int column)
     auto newCounter = mInventory->at(row,column);
     auto resultedImage = mItem->getScaledApplePixmap(100);
     QPainter painter(&resultedImage);
-    painter.drawText(90, 90, QString::number(newCounter));
+    if(newCounter > 0) // do not display zero
+        painter.drawText(90, 90, QString::number(newCounter));
     item(row,column)->setData(Qt::DecorationRole, resultedImage);
+}
+
+void DropAcceptingTableWidget::removeAppleOn(QTableWidgetItem* item)
+{
+    if(!item)
+        return;
+    auto r = item->row();
+    auto c = item->column();
+    if(mInventory->at(r,c) == 0) // nothing to delete
+        return;
+    mInventory->at(r,c)--;
+    updateImageOn(r,c);
+    player.setMedia(QUrl("qrc:/snd/crunch.mp3"));
+    player.setPosition(700);
+    player.setVolume(100);
+    player.play();
 }
 
 Inventory::Inventory(size_t size)
@@ -125,19 +142,11 @@ void DropAcceptingTableWidget::mousePressEvent(QMouseEvent* event)
                 updateImageOn(r, c);
             }
     }
+    //delete apple
     else if(event->button() == Qt::RightButton)
     {
         auto clickedItem = itemAt(event->pos());
         if(clickedItem)
-        {
-            auto r = clickedItem->row();
-            auto c = clickedItem->column();
-            mInventory->at(r,c)--; //todo more checks
-            updateImageOn(r,c);
-            player.setMedia(QUrl("qrc:/snd/crunch.mp3"));
-            player.setPosition(700);
-            player.setVolume(100);
-            player.play();
-        }
+            removeAppleOn(clickedItem);
     }
 }
