@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/images">
         <file>red_apple.jpg</file>
+        <file>empty.jpg</file>
     </qresource>
     <qresource prefix="/snd">
         <file>crunch.mp3</file>

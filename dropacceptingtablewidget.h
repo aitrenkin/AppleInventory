@@ -11,6 +11,7 @@ public:
     Item(QString Type, QString IconPath)
         : mType(Type), mIconPath(IconPath){}
     QPixmap getScaledApplePixmap(int size);
+    QPixmap getScaledEmptyCellPixmap(int size);
 private:
     QString mType;
     QString mIconPath;

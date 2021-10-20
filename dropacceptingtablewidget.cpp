@@ -65,7 +65,7 @@ void DropAcceptingTableWidget::createSquareTable(int count)
             auto thumbnail = new QTableWidgetItem();
             thumbnail->setFlags(thumbnail->flags() ^ Qt::ItemIsEditable);
             thumbnail->setData(Qt::DecorationRole,
-                                mItem->getScaledApplePixmap(100));
+                                mItem->getScaledEmptyCellPixmap(100));
             setItem(row,column,thumbnail);
             resizeColumnsToContents();
             resizeRowsToContents();
@@ -78,13 +78,23 @@ QPixmap Item::getScaledApplePixmap(int size)
     return QPixmap(":/images/red_apple.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
 }
 
+QPixmap Item::getScaledEmptyCellPixmap(int size)
+{
+    return QPixmap(":/images/empty.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
+}
+
 void DropAcceptingTableWidget::updateImageOn(int row, int column)
 {
     auto newCounter = mInventory->at(row,column);
-    auto resultedImage = mItem->getScaledApplePixmap(100);
-    QPainter painter(&resultedImage);
-    if(newCounter > 0) // do not display zero
+    QPixmap resultedImage;//
+    if(newCounter > 0)
+    {
+        resultedImage = mItem->getScaledApplePixmap(100);
+        QPainter painter(&resultedImage);
         painter.drawText(90, 90, QString::number(newCounter));
+    }
+    else
+        resultedImage = mItem->getScaledEmptyCellPixmap(100);
     item(row,column)->setData(Qt::DecorationRole, resultedImage);
 }
 
