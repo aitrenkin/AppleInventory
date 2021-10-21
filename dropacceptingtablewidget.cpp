@@ -36,14 +36,26 @@ void DropAcceptingTableWidget::dragEnterEvent(QDragEnterEvent* event)
 
 void DropAcceptingTableWidget::dropEvent(QDropEvent* event)
 {
-    std::cout << Q_FUNC_INFO << std::endl;
-    event->acceptProposedAction();
+
+
     auto item = itemAt(event->pos());
     if(item)
     {
         auto r = item->row();
         auto c = item->column();
-        std::cout << "Dropped in: " << r << " " << c << std::endl;
+        //
+        int previousRow,previousColumn;
+        auto coords = event->mimeData()->property("from").toStringList();
+        if(coords.size() == 2) // проверим не кидаем ли в старую ячейку
+        {
+            previousRow = coords.at(0).toInt();
+            previousColumn = coords.at(1).toInt();
+            if(r == previousRow && c == previousColumn)
+                return;
+        }
+        event->acceptProposedAction();
+        //
+        //std::cout << "Dropped in: " << r << " " << c << std::endl;
         auto toAdd = event->mimeData()->text().toInt();
         mInventory->counterAt(r,c) += toAdd;
         updateImageOn(item->row(), item->column());
@@ -76,16 +88,6 @@ void DropAcceptingTableWidget::createSquareTable(int count)
         }
     }
 }
-
-//QPixmap Item::getScaledApplePixmap(int size)
-//{
-//    return QPixmap(":/images/red_apple.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
-//}
-
-//QPixmap Item::getScaledEmptyCellPixmap(int size)
-//{
-//    return QPixmap(":/images/empty.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
-//}
 
 void DropAcceptingTableWidget::updateImageOn(int row, int column)
 {
@@ -148,11 +150,18 @@ void DropAcceptingTableWidget::mousePressEvent(QMouseEvent* event)
             QMimeData* mimeData = new QMimeData;
             auto item = itemAt(event->pos());
             if(!item)
+            {
+                delete mimeData;
                 return;
+            }
             auto r = item->row();
             auto c = item->column();
             auto &dragValue = mInventory->counterAt(r, c);
             mimeData->setText(QString::number(dragValue));
+            mimeData->setProperty("from",QStringList{
+                                      QString::number(r),
+                                      QString::number(c)
+                                  });
             drag->setMimeData(mimeData);
             Qt::DropAction dropAction = drag->exec();
             if(dropAction)
