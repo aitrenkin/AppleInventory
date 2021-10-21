@@ -33,7 +33,7 @@ public:
     void clear();
     void clearCounters();
     size_t& counterAt(int row, int column);
-    QString typeAt(int row, int column);
+    QString& typeAt(int row, int column);
 private:
     QVector<QVector<size_t>> mTableOfCounters;
     QVector<QVector<QString>> mTableOfTypes;

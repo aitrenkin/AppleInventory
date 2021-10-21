@@ -45,8 +45,6 @@ void DropAcceptingTableWidget::dragEnterEvent(QDragEnterEvent* event)
 
 void DropAcceptingTableWidget::dropEvent(QDropEvent* event)
 {
-
-
     auto item = itemAt(event->pos());
     if(item)
     {
@@ -67,7 +65,9 @@ void DropAcceptingTableWidget::dropEvent(QDropEvent* event)
         //std::cout << "Dropped in: " << r << " " << c << std::endl;
         auto toAdd = event->mimeData()->text().toInt();
         mInventory->counterAt(r,c) += toAdd;
+        mInventory->typeAt(r,c) = "Apple";
         updateImageOn(item->row(), item->column());
+        db.saveInventory(*mInventory);
     }
 }
 
@@ -138,6 +138,13 @@ Inventory::Inventory(size_t size)
         for(auto &value : row)
             value = 0;
     }
+    mTableOfTypes.resize(size);
+    for(auto &row : mTableOfTypes)
+    {
+        row.resize(size);
+        for(auto &value : row)
+            value = "Empty";
+    }
 }
 
 size_t& Inventory::counterAt(int row, int column)
@@ -145,7 +152,7 @@ size_t& Inventory::counterAt(int row, int column)
     return mTableOfCounters[row][column];
 }
 
-QString Inventory::typeAt(int row, int column)
+QString& Inventory::typeAt(int row, int column)
 {
     return mTableOfTypes[row][column];
 }
@@ -201,10 +208,10 @@ Database::Database(QString dbName)
                        db.lastError().text().toStdString() << std::endl;
           return;
       }
-      auto tables = db.tables().toStdList();
-      std::cout << "tables: " << std::endl;
-      for(const auto &t : tables)
-          std::cout << t.toStdString() << std::endl;
+//      auto tables = db.tables().toStdList();
+//      std::cout << "tables: " << std::endl;
+//      for(const auto &t : tables)
+//          std::cout << t.toStdString() << std::endl;
 }
 
 void Database::saveInventory(Inventory& toSave)
