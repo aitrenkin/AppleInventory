@@ -6,4 +6,7 @@
     <qresource prefix="/snd">
         <file>crunch.mp3</file>
     </qresource>
+    <qresource prefix="/db">
+        <file>GameObjects</file>
+    </qresource>
 </RCC>

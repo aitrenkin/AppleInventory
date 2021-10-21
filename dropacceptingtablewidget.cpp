@@ -6,18 +6,24 @@
 #include <QMimeData>
 #include <QHeaderView>
 #include <QDrag>
-
+#include <QMessageBox>
 DropAcceptingTableWidget::DropAcceptingTableWidget(QWidget* parent)
     :QTableWidget(parent)
+    ,db("GameObjects")
 {
-    createSquareTable(3);
+    if(!db.isOpen())
+    {
+        QMessageBox::critical(this,"Error","Can not open database GameObjects");
+        return;
+    }
+    mEmptyItem = db.loadItem("Empty");
+    mAppleItem = db.loadItem("Apple");
     horizontalHeader()->hide();
     verticalHeader()->hide();
     //
-
-    //todo read from DB
-    mInventory = new Inventory(3);
-
+    size_t inventorySize = 3;
+    createSquareTable(inventorySize);
+    mInventory = new Inventory(inventorySize);
 }
 
 
@@ -39,7 +45,7 @@ void DropAcceptingTableWidget::dropEvent(QDropEvent* event)
         auto c = item->column();
         std::cout << "Dropped in: " << r << " " << c << std::endl;
         auto toAdd = event->mimeData()->text().toInt();
-        mInventory->at(r,c) += toAdd;
+        mInventory->counterAt(r,c) += toAdd;
         updateImageOn(item->row(), item->column());
     }
 }
@@ -63,7 +69,7 @@ void DropAcceptingTableWidget::createSquareTable(int count)
             auto thumbnail = new QTableWidgetItem();
             thumbnail->setFlags(thumbnail->flags() ^ Qt::ItemIsEditable);
             thumbnail->setData(Qt::DecorationRole,
-                                mItem->getScaledEmptyCellPixmap(100));
+                                mEmptyItem.getScaledPixmap(100));
             setItem(row,column,thumbnail);
             resizeColumnsToContents();
             resizeRowsToContents();
@@ -71,28 +77,28 @@ void DropAcceptingTableWidget::createSquareTable(int count)
     }
 }
 
-QPixmap Item::getScaledApplePixmap(int size)
-{
-    return QPixmap(":/images/red_apple.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
-}
+//QPixmap Item::getScaledApplePixmap(int size)
+//{
+//    return QPixmap(":/images/red_apple.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
+//}
 
-QPixmap Item::getScaledEmptyCellPixmap(int size)
-{
-    return QPixmap(":/images/empty.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
-}
+//QPixmap Item::getScaledEmptyCellPixmap(int size)
+//{
+//    return QPixmap(":/images/empty.jpg").scaled(size,size,Qt::KeepAspectRatio); // todo db
+//}
 
 void DropAcceptingTableWidget::updateImageOn(int row, int column)
 {
-    auto newCounter = mInventory->at(row,column);
+    auto newCounter = mInventory->counterAt(row,column);
     QPixmap resultedImage;//
     if(newCounter > 0)
     {
-        resultedImage = mItem->getScaledApplePixmap(100);
+        resultedImage = mAppleItem.getScaledPixmap(100);
         QPainter painter(&resultedImage);
         painter.drawText(90, 90, QString::number(newCounter));
     }
     else
-        resultedImage = mItem->getScaledEmptyCellPixmap(100);
+        resultedImage = mEmptyItem.getScaledPixmap(100);
     item(row,column)->setData(Qt::DecorationRole, resultedImage);
 }
 
@@ -102,9 +108,9 @@ void DropAcceptingTableWidget::removeAppleOn(QTableWidgetItem* item)
         return;
     auto r = item->row();
     auto c = item->column();
-    if(mInventory->at(r,c) == 0) // nothing to delete
+    if(mInventory->counterAt(r,c) == 0) // nothing to delete
         return;
-    mInventory->at(r,c)--;
+    mInventory->counterAt(r,c)--;
     updateImageOn(r,c);
     player.setMedia(QUrl("qrc:/snd/crunch.mp3"));
     player.setPosition(700);
@@ -123,9 +129,14 @@ Inventory::Inventory(size_t size)
     }
 }
 
-size_t& Inventory::at(int row, int column)
+size_t& Inventory::counterAt(int row, int column)
 {
     return mTableOfCounters[row][column];
+}
+
+QString Inventory::typeAt(int row, int column)
+{
+    return mTableOfTypes[row][column];
 }
 
 
@@ -140,7 +151,7 @@ void DropAcceptingTableWidget::mousePressEvent(QMouseEvent* event)
                 return;
             auto r = item->row();
             auto c = item->column();
-            auto &dragValue = mInventory->at(r, c);
+            auto &dragValue = mInventory->counterAt(r, c);
             mimeData->setText(QString::number(dragValue));
             drag->setMimeData(mimeData);
             Qt::DropAction dropAction = drag->exec();
@@ -157,4 +168,81 @@ void DropAcceptingTableWidget::mousePressEvent(QMouseEvent* event)
         if(clickedItem)
             removeAppleOn(clickedItem);
     }
+}
+
+Database::Database(QString dbName)
+{
+    QString driver = "QSQLITE";
+    if(!QSqlDatabase::isDriverAvailable(driver))
+        return;
+      db = QSqlDatabase::addDatabase(driver,"SQLITE");
+      db.setDatabaseName(dbName);
+      if(!db.open())
+      {
+          std::cout << "Can't open " << dbName.toStdString() << " : " <<
+                       db.lastError().text().toStdString() << std::endl;
+          return;
+      }
+      auto tables = db.tables().toStdList();
+      std::cout << "tables: " << std::endl;
+      for(const auto &t : tables)
+          std::cout << t.toStdString() << std::endl;
+}
+
+void Database::saveInventory(Inventory& toSave)
+{
+    auto size = toSave.size();
+    if(size == 0)
+        return;
+    QSqlQuery query(db);
+    query.prepare("DELETE FROM Inventory");
+    if(!query.exec())
+    {
+        std::cout << Q_FUNC_INFO << std::endl ;
+        std::cout << "ERROR: " << query.lastError().text().toStdString();
+    }
+    for(size_t x = 0; x < size; x++)
+    {
+        for(size_t y = 0; y < size; y++)
+        {
+            query.prepare("INSERT INTO Inventory VALUES(?,?,?,?)");
+            query.addBindValue(int(x));
+            query.addBindValue(int(y));
+            query.addBindValue(int(toSave.counterAt(x,y)));
+            query.addBindValue(toSave.typeAt(x,y));
+            if(!query.exec())
+                std::cout << "Can not exec query: " << query.lastError().text().toStdString() << std::endl;
+        }
+    }
+}
+
+void Database::saveItem(Item& toSave)
+{
+//
+}
+
+Inventory Database::loadInventory()
+{
+//?
+}
+//Qvariant?
+Item Database::loadItem(QString type)
+{
+    QSqlQuery query(QString("SELECT image FROM Item WHERE itemType='%1'").arg(type),db);
+    std::cout << query.lastQuery().toStdString() << std::endl;
+    if(!query.exec())
+    {
+        std::cout << Q_FUNC_INFO << std::endl;
+        std::cout << "Type: " << type.toStdString() << std::endl;
+        std::cout << "ERROR: " << query.lastError().text().toStdString() << std::endl;
+
+    }
+    query.last();
+    Item result(type, query.value(0).toString());
+    return result;
+}
+
+QPixmap Item::getScaledPixmap(int size)
+{
+    return QPixmap(mIconPath).scaled(size,size,Qt::KeepAspectRatio);
 }
