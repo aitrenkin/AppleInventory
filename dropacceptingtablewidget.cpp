@@ -26,6 +26,15 @@ DropAcceptingTableWidget::DropAcceptingTableWidget(QWidget* parent)
     mInventory = new Inventory(inventorySize);
 }
 
+void DropAcceptingTableWidget::startNewGame()
+{
+    int size = 3;
+    mInventory = new Inventory(size);
+    for(int x = 0; x < size; x++)
+        for(int y = 0; y < size; y++)
+            updateImageOn(x,y);
+}
+
 
 void DropAcceptingTableWidget::dragEnterEvent(QDragEnterEvent* event)
 {

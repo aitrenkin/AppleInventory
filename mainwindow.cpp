@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pageMEnu, &StartGameMenu::startNewGame,
             [this]()
     {
-        //ui->pageGame->startNewGame()
+        ui->pageGame->startNewGame();
         ui->stackedWidget->setCurrentWidget(ui->pageGame);
     });
     connect(ui->pageGame, &GameBoard::goToMenu,

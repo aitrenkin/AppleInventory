@@ -17,5 +17,5 @@ GameBoard::~GameBoard()
 
 void GameBoard::startNewGame()
 {
-    //
+    ui->appleTable->startNewGame();
 }

@@ -58,7 +58,7 @@ class DropAcceptingTableWidget : public QTableWidget
 public:
     DropAcceptingTableWidget(QWidget *parent = nullptr);
 
-
+    void startNewGame();
     // QWidget interface
 protected:
     void dragEnterEvent(QDragEnterEvent* event) override;
