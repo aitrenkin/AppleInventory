@@ -8,6 +8,17 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(ui->pageMEnu, &StartGameMenu::startNewGame,
+            [this]()
+    {
+        //ui->pageGame->startNewGame()
+        ui->stackedWidget->setCurrentWidget(ui->pageGame);
+    });
+    connect(ui->pageGame, &GameBoard::goToMenu,
+            [this]()
+    {
+        ui->stackedWidget->setCurrentWidget(ui->pageMEnu);
+    });
 }
 
 MainWindow::~MainWindow()

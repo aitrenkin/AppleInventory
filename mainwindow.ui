@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>863</width>
-    <height>376</height>
+    <width>1000</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>860</width>
-    <height>376</height>
+    <width>1000</width>
+    <height>400</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>960</width>
-    <height>400</height>
+    <width>1000</width>
+    <height>435</height>
    </size>
   </property>
   <property name="acceptDrops">
@@ -29,58 +29,14 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="DropAcceptingTableWidget" name="appleTable">
-      <property name="minimumSize">
-       <size>
-        <width>350</width>
-        <height>350</height>
-       </size>
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>350</width>
-        <height>350</height>
-       </size>
-      </property>
-      <property name="acceptDrops">
-       <bool>true</bool>
-      </property>
-      <property name="dragEnabled">
-       <bool>true</bool>
-      </property>
-      <property name="dragDropMode">
-       <enum>QAbstractItemView::DropOnly</enum>
-      </property>
-      <property name="defaultDropAction">
-       <enum>Qt::MoveAction</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="DraggableLabel" name="sourceImage">
-      <property name="minimumSize">
-       <size>
-        <width>391</width>
-        <height>301</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>391</width>
-        <height>301</height>
-       </size>
-      </property>
-      <property name="acceptDrops">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="scaledContents">
-       <bool>true</bool>
-      </property>
+      <widget class="StartGameMenu" name="pageMEnu"/>
+      <widget class="GameBoard" name="pageGame"/>
      </widget>
     </item>
    </layout>
@@ -90,7 +46,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>863</width>
+     <width>1000</width>
      <height>40</height>
     </rect>
    </property>
@@ -99,14 +55,16 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DraggableLabel</class>
-   <extends>QLabel</extends>
-   <header location="global">draggablelabel.h</header>
+   <class>StartGameMenu</class>
+   <extends>QWidget</extends>
+   <header location="global">startgamemenu.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
-   <class>DropAcceptingTableWidget</class>
-   <extends>QTableWidget</extends>
-   <header location="global">dropacceptingtablewidget.h</header>
+   <class>GameBoard</class>
+   <extends>QWidget</extends>
+   <header location="global">gameboard.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -10,8 +10,6 @@
 DropAcceptingTableWidget::DropAcceptingTableWidget(QWidget* parent)
     :QTableWidget(parent)
 {
-    std::cout << Q_FUNC_INFO << std::endl;
-    //setIconSize(QSize(100,100));
     createSquareTable(3);
     horizontalHeader()->hide();
     verticalHeader()->hide();

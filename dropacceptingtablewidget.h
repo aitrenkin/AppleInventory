@@ -30,6 +30,7 @@ private:
     QVector<QVector<size_t>> mTableOfCounters;
 };
 
+
 class DropAcceptingTableWidget : public QTableWidget
 {
     Q_OBJECT

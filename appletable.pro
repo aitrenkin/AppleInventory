@@ -11,16 +11,22 @@ CONFIG += c++11
 SOURCES += \
     draggablelabel.cpp \
     dropacceptingtablewidget.cpp \
+    gameboard.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    startgamemenu.cpp
 
 HEADERS += \
     draggablelabel.h \
     dropacceptingtablewidget.h \
-    mainwindow.h
+    gameboard.h \
+    mainwindow.h \
+    startgamemenu.h
 
 FORMS += \
-    mainwindow.ui
+    gameboard.ui \
+    mainwindow.ui \
+    startgamemenu.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
